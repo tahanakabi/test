@@ -1,0 +1,31 @@
+---
+apiVersion: machinelearning.seldon.io/v1alpha2
+kind: SeldonDeployment
+metadata:
+  name: model-a
+  namespace: markus-mlflow
+spec:
+  name: model-a
+  predictors:
+  - componentSpecs:
+    - metadata:
+      spec:
+        containers:
+        - name: product-recommendation
+          livenessProbe:
+            initialDelaySeconds: 1500
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+            tcpSocket:
+              port: http
+ 
+    graph:
+      children: []
+      implementation: MLFLOW_SERVER
+      modelUri: s3://recsys
+      name: product-recommendation
+      envSecretRefName: minio-config
+    name: product-recommendation
+    replicas: 1
